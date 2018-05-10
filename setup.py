@@ -95,9 +95,13 @@ class PyTest(TestCommand):
 tests_require = install_requires + ['pytest', 'gunicorn',
                                     'pytest-timeout', 'async-generator']
 
+name = 'aiohttp'
+appveyor_slug = 'asvetlov/{}'.format(name)  # FIXME: move under aio-libs/* slug
+repo_slug = 'aio-libs/{}'.format(name)
+repo_url = 'https://github.com/{}'.format(repo_slug)
 
 args = dict(
-    name='aiohttp',
+    name=name,
     version=version,
     description='Async http client/server framework (asyncio)',
     long_description='\n\n'.join((read('README.rst'), read('CHANGES.rst'))),
@@ -120,7 +124,18 @@ args = dict(
     maintainer=', '.join(('Nikolay Kim <fafhrd91@gmail.com>',
                           'Andrew Svetlov <andrew.svetlov@gmail.com>')),
     maintainer_email='aio-libs@googlegroups.com',
-    url='https://github.com/aio-libs/aiohttp/',
+    url=repo_url,
+    project_urls={
+        'Chat: Gitter': 'https://gitter.im/aio-libs/Lobby',
+        'CI: AppVeyor': 'https://ci.appveyor.com/project/{}'.format(appveyor_slug),
+        'CI: Circle': 'https://circleci.com/gh/{}'.format(repo_slug),
+        'CI: Shippable': 'https://app.shippable.com/github/{}'.format(repo_slug),
+        'CI: Travis': 'https://travis-ci.com/{}'.format(repo_slug),
+        'Coverage: codecov': 'https://codecov.io/github/{}'.format(repo_slug),
+        'Docs: RTD': 'https://docs.{}.org'.format(name),
+        'GitHub: issues': '{}/issues'.format(repo_url),
+        'GitHub: repo': repo_url,
+    },
     license='Apache 2',
     packages=['aiohttp'],
     python_requires='>=3.5.3',
