@@ -7,7 +7,6 @@ from distutils.errors import (CCompilerError, DistutilsExecError,
                               DistutilsPlatformError)
 
 from setuptools import Extension, setup
-from setuptools.command.test import test as TestCommand
 
 
 if sys.version_info < (3, 5, 3):
@@ -83,17 +82,11 @@ def read(f):
     return (here / f).read_text('utf-8').strip()
 
 
-class PyTest(TestCommand):
-    user_options = []
+NEEDS_PYTEST = {'pytest', 'test'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if NEEDS_PYTEST else []
 
-    def run(self):
-        import subprocess
-        errno = subprocess.call([sys.executable, '-m', 'pytest', 'tests'])
-        raise SystemExit(errno)
-
-
-tests_require = install_requires + ['pytest', 'gunicorn',
-                                    'pytest-timeout', 'async-generator']
+tests_require = ['pytest', 'gunicorn',
+                 'pytest-timeout', 'async-generator']
 
 name = 'aiohttp'
 appveyor_slug = 'asvetlov/{}'.format(name)  # FIXME: move under aio-libs/* slug
@@ -142,10 +135,11 @@ args = dict(
     python_requires='>=3.5.3',
     install_requires=install_requires,
     tests_require=tests_require,
+    setup_requires=pytest_runner,
     include_package_data=True,
     ext_modules=extensions,
-    cmdclass=dict(build_ext=ve_build_ext,
-                  test=PyTest))
+    cmdclass=dict(build_ext=ve_build_ext),
+)
 
 try:
     setup(**args)
